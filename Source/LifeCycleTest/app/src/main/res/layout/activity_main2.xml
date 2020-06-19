@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="10dp"
+    tools:context=".Main2Activity">
+
+    <EditText
+        android:id="@+id/et"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="xml 파일에 저장할 데이터를 입력하세요."/>
+
+    <Button
+        android:onClick="goBack1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="xml 파일에 데이터를 저장하고 돌아가기"/>
+
+    <Button
+        android:onClick="goBack2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="xml 파일의 데이터를 지우고 돌아가기"/>
+
+</LinearLayout>
