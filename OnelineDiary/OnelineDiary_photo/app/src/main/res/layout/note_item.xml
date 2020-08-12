@@ -7,7 +7,7 @@
     android:layout_marginLeft="4dp"
     android:layout_marginRight="6dp"
     android:layout_marginBottom="4dp"
-    app:cardBackgroundColor="#fffffff"
+    app:cardBackgroundColor="#ffffffff"
     app:cardCornerRadius="10dp"
     app:cardElevation="5dp">
 
@@ -98,9 +98,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:visibility="gone">
+        android:visibility="visible">
 
         <ImageView
+            android:id="@+id/pictureImageView"
             android:layout_width="match_parent"
             android:layout_height="200dp"
             android:layout_margin="10dp"
@@ -130,11 +131,20 @@
                 android:layout_marginTop="10dp">
 
                 <ImageView
+                    android:id="@+id/moodImageView2"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:padding="5dp"
+                    android:src="@drawable/smile5_48"
+                    android:layout_alignParentLeft="true"/>
+
+                <ImageView
                     android:id="@+id/weatherImageView2"
                     android:layout_width="32dp"
                     android:layout_height="32dp"
+                    android:layout_toRightOf="@+id/moodImageView2"
                     android:src="@drawable/weather_icon_1"
-                    android:layout_alignParentLeft="true"/>
+                    android:layout_marginLeft="10dp" />
 
                 <ImageView
                     android:id="@+id/pictureExistsImageView2"
