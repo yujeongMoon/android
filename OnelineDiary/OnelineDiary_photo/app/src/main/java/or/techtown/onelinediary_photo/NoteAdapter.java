@@ -39,6 +39,8 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder>
     // 뷰 객체가 재사용될 때(데이터만 바꿔줌)
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Note item = items.get(position);
+        holder.setItem(item);
+        holder.setLayoutType(layoutType);
     }
 
     @Override
