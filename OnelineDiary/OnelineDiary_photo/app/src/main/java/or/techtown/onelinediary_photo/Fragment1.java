@@ -94,9 +94,9 @@ public class Fragment1 extends Fragment {
         adapter = new NoteAdapter();
 
         adapter.addItem(new Note(0, "0", "강남구 삼성동", "","",
-                "오늘 너무 행복해!", "0", "capture1.jpg", "8월 10일"));
+                "오늘 너무 행복해!", "3", "capture1.jpg", "8월 10일"));
         adapter.addItem(new Note(1, "1", "강남구 삼성동", "","",
-                "친구와 재미있게 놀았어", "0", "capture1.jpg", "8월 11일"));
+                "친구와 재미있게 놀았어", "3", "capture1.jpg", "8월 11일"));
         adapter.addItem(new Note(2, "0", "강남구 역삼동", "","",
                 "집에 왔는데 너무 피곤해", "0", "capture1.jpg", "8월 12일"));
 
