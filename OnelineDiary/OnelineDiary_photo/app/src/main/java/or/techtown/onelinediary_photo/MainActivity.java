@@ -19,9 +19,11 @@ import com.pedro.library.AutoPermissionsListener;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Date;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity
-        implements OnTabItemSelectedListener, OnRequestListener, AutoPermissionsListener {
+        implements OnTabItemSelectedListener, OnRequestListener, AutoPermissionsListener
+                    , MyApplication.OnResponseListener{
 
     Fragment1 fragment1;
     Fragment2 fragment2;
@@ -178,6 +180,11 @@ public class MainActivity extends AppCompatActivity
         Toast.makeText(this, "permissions granted : " + permissions.length, Toast.LENGTH_LONG).show();
     }
 
+    @Override
+    public void processResponse(int requestCode, int responseCode, String response) {
+
+    }
+
     class GPSListener implements LocationListener{
 
         @Override
@@ -210,7 +217,9 @@ public class MainActivity extends AppCompatActivity
 
     }
 
+    // 현재 위치를 이용하여 날씨 정보 가져오는 메소드
     private void getCurrentWeather() {
+        Map<String, Double> gridMap = GridUtil.getGrid(currentLocation.getLatitude(), currentLocation.getLongitude());
 
     }
 
