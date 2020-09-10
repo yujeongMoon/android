@@ -4,6 +4,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -12,14 +14,26 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.android.volley.Request;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.pedro.library.AutoPermissions;
 import com.pedro.library.AutoPermissionsListener;
+import com.stanfy.gsonxml.GsonXml;
+import com.stanfy.gsonxml.GsonXmlBuilder;
+import com.stanfy.gsonxml.XmlParserCreator;
 
 import org.jetbrains.annotations.NotNull;
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserFactory;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+
+import or.techtown.onelinediary_photo.data.WeatherItem;
+import or.techtown.onelinediary_photo.data.WeatherResult;
 
 public class MainActivity extends AppCompatActivity
         implements OnTabItemSelectedListener, OnRequestListener, AutoPermissionsListener
@@ -44,6 +58,9 @@ public class MainActivity extends AppCompatActivity
     // 현재 날짜
     Date currentDate;
     String currentDateString;
+
+    // 현재 위치 날씨
+    String currentWeather;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -213,14 +230,100 @@ public class MainActivity extends AppCompatActivity
         public void onProviderDisabled(String provider) { }
     }
 
+    // 현재 위치를 이용해 주소를 확인하기 위한 메소드
     private void getCurrentAddress() {
-
+        Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+        List<Address> addresses = null;
     }
 
     // 현재 위치를 이용하여 날씨 정보 가져오는 메소드
     private void getCurrentWeather() {
+
+        // GtidUtil 클래스의 getGrid 메소드는 날씨 정보를 확인하고 싶은 지역의 좌표를 경위도 좌표에서 격자 번호로 변환해준다
+        // 기상청에서 제공하는 날씨 데이터는 지역 정보를 격자 번호로 제공하고
+        // 우리가 확인한 지역 정보는 경위도 좌표로 보이기 때문에 격자 번호로 변환과정이 필요하다.
         Map<String, Double> gridMap = GridUtil.getGrid(currentLocation.getLatitude(), currentLocation.getLongitude());
 
+        double gridX = gridMap.get("x");
+        double gridY = gridMap.get("y");
+
+        println("x -> " + gridX + "y -> " + gridY);
+
+        sendLocalWeatherReq(gridX, gridY);
+
+    }
+
+    // 기상청 날씨 서버로 요청을 전송함
+    public void sendLocalWeatherReq(double gridX, double gridY){
+        String url = "http://www.kma.go.kr/wid/queryDFS.jsp";
+        url += "?gridx=" + Math.round(gridX);
+        url += "?gridy=" + Math.round(gridY);
+
+        Map<String, String> params = new HashMap<String, String>();
+
+        MyApplication.send(AppConstants.REQ_WEATHER_BY_GRID, Request.Method.GET, url, params, this);
+    }
+
+    // 기상청에서 응답을 받으면 호출됨
+    public void progressResponse(int requestCode,  int responseCode, String response){
+        if(responseCode == 200){
+            if(requestCode == AppConstants.REQ_WEATHER_BY_GRID){
+
+                XmlParserCreator parserCreator = new XmlParserCreator() {
+                    @Override
+                    public XmlPullParser createParser() {
+                        try{
+                            return XmlPullParserFactory.newInstance().newPullParser();
+                        }catch (Exception e){
+                            throw new RuntimeException(e);
+                        }
+                    }
+                };
+
+                GsonXml gsonXml = new GsonXmlBuilder()
+                        .setXmlParserCreator(parserCreator)
+                        .setSameNameLists(true)
+                        .create();
+
+                WeatherResult weather = gsonXml.fromXml(response, WeatherResult.class);
+
+                try {
+                    Date tmDate = AppConstants.dateFormat.parse(weather.header.tm);
+                    String tmDateText = AppConstants.dateFormat2.format(tmDate);
+                    println("기준 시간 : " + tmDateText);
+
+                    for (int i = 0; i < weather.body.datas.size(); i++) {
+                        WeatherItem item = weather.body.datas.get(i);
+                        println("#" + i + " 시간 : " + item.hour + "시, " + item.day + "일째");
+                        println("  날씨 : " + item.wfKor);
+                        println("  기온 : " + item.temp + " C");
+                        println("  강수확률 : " + item.pop + "%");
+
+                        println("debug 1 : " + (int) Math.round(item.ws * 10));
+                        float ws = Float.valueOf(String.valueOf((int) Math.round(item.ws * 10))) / 10.0f;
+                        println("  풍속 : " + ws + " m/s");
+                    }
+
+                    WeatherItem item = weather.body.datas.get(0);
+                    currentWeather = item.wfKor;
+
+                    if(fragment2 != null){
+                        // fragment2.setWeather(item.wfKor);
+                    }
+
+                    if(locationCount > 0){
+                        stopLocationService();
+                    }
+
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+            }else{
+                println("Unknown request code : " + requestCode);
+            }
+        }else{
+            println("Failure response code : " + responseCode);
+        }
     }
 
     private void println(String data) {
