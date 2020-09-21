@@ -22,7 +22,6 @@ import com.stanfy.gsonxml.GsonXml;
 import com.stanfy.gsonxml.GsonXmlBuilder;
 import com.stanfy.gsonxml.XmlParserCreator;
 
-import org.jetbrains.annotations.NotNull;
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserFactory;
 
@@ -36,8 +35,7 @@ import or.techtown.onelinediary_photo.data.WeatherItem;
 import or.techtown.onelinediary_photo.data.WeatherResult;
 
 public class MainActivity extends AppCompatActivity
-        implements OnTabItemSelectedListener, OnRequestListener, AutoPermissionsListener
-                    , MyApplication.OnResponseListener{
+        implements OnTabItemSelectedListener, OnRequestListener, MyApplication.OnResponseListener{
 
     Fragment1 fragment1;
     Fragment2 fragment2;
@@ -187,7 +185,7 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    @Override
+   /* @Override
     public void onDenied(int requestCode, @NotNull String[] permissions) {
         Toast.makeText(this, "permissions denied : " + permissions.length, Toast.LENGTH_LONG).show();
     }
@@ -195,7 +193,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onGranted(int requestCode, @NotNull String[] permissions) {
         Toast.makeText(this, "permissions granted : " + permissions.length, Toast.LENGTH_LONG).show();
-    }
+    }*/
 
     @Override
     public void processResponse(int requestCode, int responseCode, String response) {
